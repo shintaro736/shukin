@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #F4F5F1;
+  color: #17241C;
+  font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px 20px 100px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.sub {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #55625A;
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.btn-outline {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #C9CFC5;
+  border-radius: 22px;
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E5A3C;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #1E5A3C;
+  color: #FFFFFF;
+}
+
+.summary-label {
+  margin: 0;
+  font-size: 12px;
+}
+
+.summary-amount {
+  margin: 2px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.summary-note {
+  margin: 0;
+  font-size: 13px;
+  text-align: right;
+}
+
+.section-title {
+  margin: 24px 0 8px;
+  font-size: 13px;
+  color: #55625A;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #DDE1DA;
+  border-radius: 12px;
+  background: #FFFFFF;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-top h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.card-meta {
+  font-size: 13px;
+  font-weight: 700;
+  color: #55625A;
+}
+
+.bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #E6E9E3;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: #2F7D4F;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #55625A;
+}
+
+.unpaid {
+  font-weight: 700;
+  color: #B4460E;
+}
+
+.refund {
+  font-weight: 700;
+  color: #1F4E8C;
+}
+
+.done {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #ECEEE9;
+  font-size: 14px;
+  color: #55625A;
+}
+
+.btn-main {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 440px;
+  height: 54px;
+  border: none;
+  border-radius: 27px;
+  background: #17241C;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+}

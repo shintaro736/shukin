@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>集金ツール</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <p class="sub">軟式野球サークル 会計</p>
+        <h1>集金一覧</h1>
+      </div>
+      <button class="btn-outline">名簿</button>
+    </header>
+
+    <section class="summary">
+      <div>
+        <p class="summary-label">未回収の合計</p>
+        <p class="summary-amount">¥18,000</p>
+      </div>
+      <p class="summary-note">未払い 延べ7人<br>集金中 2件</p>
+    </section>
+
+    <h2 class="section-title">集金中</h2>
+    <div class="list">
+      <article class="card">
+        <div class="card-top">
+          <h3>9月 飲み会</h3>
+          <span class="card-meta">学年別 ・ ¥34,000</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 67%"></div></div>
+        <div class="card-bottom">
+          <span>8 / 12人 支払い済み</span>
+          <span><span class="unpaid">未払い 4人</span> <span class="refund">返金待ち 1人</span></span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <h3>後期 部費</h3>
+          <span class="card-meta">均等 ・ ¥40,000</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 85%"></div></div>
+        <div class="card-bottom">
+          <span>17 / 20人 支払い済み</span>
+          <span class="unpaid">未払い 3人</span>
+        </div>
+      </article>
+    </div>
+
+    <h2 class="section-title">完了</h2>
+    <div class="done">
+      <span>夏合宿 参加費</span>
+      <span>全員回収済み</span>
+    </div>
+
+    <button class="btn-main">＋ 新しい集金を作る</button>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
