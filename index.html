@@ -2,63 +2,507 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>集金ツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1F2C4F">
+  <meta name="apple-mobile-web-app-title" content="サークル会計">
+  <title>サークル会計</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow:wght@500;600&family=Barlow+Condensed:wght@500;600&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
-    <header class="header">
-      <div>
-        <p class="sub">軟式野球サークル 会計</p>
-        <h1>集金一覧</h1>
+
+  <!-- ========== タブ:帳簿(ホーム) ========== -->
+  <section class="screen" id="screen-home">
+    <div class="home-head">
+      <svg class="seam" viewBox="0 0 260 260" aria-hidden="true">
+        <circle cx="130" cy="130" r="128" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2"/>
+        <path d="M58 30 C 110 90, 110 170, 58 230" fill="none" stroke="#B2384A" stroke-width="2.5"/>
+        <path d="M58 30 C 110 90, 110 170, 58 230" fill="none" stroke="#B2384A" stroke-width="9" stroke-dasharray="2 12"/>
+        <path d="M202 30 C 150 90, 150 170, 202 230" fill="none" stroke="#B2384A" stroke-width="2.5"/>
+        <path d="M202 30 C 150 90, 150 170, 202 230" fill="none" stroke="#B2384A" stroke-width="9" stroke-dasharray="2 12"/>
+      </svg>
+      <div class="head-row">
+        <p class="head-sub"><b>サークル会計</b> ・ 軟式野球サークル</p>
+        <label class="year-select is-dark">
+          <span class="sr-only">表示する年度</span>
+          <select data-year-select></select>
+        </label>
       </div>
-      <button class="btn-outline">名簿</button>
-    </header>
-
-    <section class="summary">
-      <div>
-        <p class="summary-label">未回収の合計</p>
-        <p class="summary-amount">¥18,000</p>
+      <p class="head-label" id="home-balance-label"></p>
+      <p class="head-amount num" id="home-balance"></p>
+      <div class="head-split">
+        <div>
+          <p class="head-small">入り</p>
+          <p class="head-value num" id="home-in"></p>
+        </div>
+        <div>
+          <p class="head-small">出</p>
+          <p class="head-value num" id="home-out"></p>
+        </div>
       </div>
-      <p class="summary-note">未払い 延べ7人<br>集金中 2件</p>
-    </section>
-
-    <h2 class="section-title">集金中</h2>
-    <div class="list">
-      <article class="card">
-        <div class="card-top">
-          <h3>9月 飲み会</h3>
-          <span class="card-meta">学年別 ・ ¥34,000</span>
-        </div>
-        <div class="bar"><div class="bar-fill" style="width: 67%"></div></div>
-        <div class="card-bottom">
-          <span>8 / 12人 支払い済み</span>
-          <span><span class="unpaid">未払い 4人</span> <span class="refund">返金待ち 1人</span></span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <h3>後期 部費</h3>
-          <span class="card-meta">均等 ・ ¥40,000</span>
-        </div>
-        <div class="bar"><div class="bar-fill" style="width: 85%"></div></div>
-        <div class="card-bottom">
-          <span>17 / 20人 支払い済み</span>
-          <span class="unpaid">未払い 3人</span>
-        </div>
-      </article>
     </div>
 
-    <h2 class="section-title">完了</h2>
-    <div class="done">
-      <span>夏合宿 参加費</span>
-      <span>全員回収済み</span>
-    </div>
+    <main class="app cols">
+      <div class="col-side">
+        <div id="home-dues"></div>
+        <div id="home-alerts"></div>
+        <div id="home-year-close"></div>
+        <button class="btn-text btn-block" id="btn-settings">開始残高・書き出し・データの設定</button>
+      </div>
+      <div class="col-main">
+        <div class="section-head">
+          <span>帳簿</span>
+          <span class="sub" id="home-count"></span>
+        </div>
+        <div id="home-months"></div>
+      </div>
+    </main>
+    <button class="fab" id="btn-home-add" aria-label="記録する">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </section>
 
-    <button class="btn-main">＋ 新しい集金を作る</button>
-  </main>
+  <!-- ========== タブ:支出・精算 ========== -->
+  <section class="screen" id="screen-spend">
+    <main class="app cols">
+      <div class="col-side">
+        <div class="title-row">
+          <h1 class="page-title">支出・精算</h1>
+          <label class="year-select">
+            <span class="sr-only">表示する年度</span>
+            <select data-year-select></select>
+          </label>
+        </div>
+
+        <p class="section-title">種類別の合計(押すとその種類だけ表示)</p>
+        <div class="cat-grid" id="spend-cats"></div>
+
+        <div id="spend-pending"></div>
+      </div>
+
+      <div class="col-main">
+        <div class="search-row">
+          <label class="search">
+            <span class="sr-only">場所・メモで探す</span>
+            <input class="input" id="spend-search" type="search" placeholder="場所・メモで探す">
+          </label>
+          <label>
+            <span class="sr-only">払った人で絞り込む</span>
+            <select class="input" id="spend-payer"></select>
+          </label>
+        </div>
+        <p class="filter-note" id="spend-filter-note"></p>
+        <div id="spend-months"></div>
+      </div>
+    </main>
+    <button class="fab" id="btn-spend-add" aria-label="支出を記録する">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </section>
+
+  <!-- ========== タブ:イベント ========== -->
+  <section class="screen" id="screen-events">
+    <main class="app cols">
+      <div class="col-side">
+        <div class="title-row">
+          <h1 class="page-title">イベント</h1>
+          <label class="year-select">
+            <span class="sr-only">表示する年度</span>
+            <select data-year-select></select>
+          </label>
+        </div>
+        <p class="hint">締めると、余りはサークル費の入り、不足はサークル費からの補填として帳簿に記録されます。</p>
+        <section class="pair">
+          <div>
+            <p class="pair-label">未回収</p>
+            <p class="pair-value num is-danger" id="events-unpaid"></p>
+          </div>
+          <div>
+            <p class="pair-label">立替の返金待ち</p>
+            <p class="pair-value num is-info" id="events-refund"></p>
+          </div>
+        </section>
+      </div>
+      <div class="col-main">
+        <h2 class="section-title">集金中</h2>
+        <div class="list" id="events-active"></div>
+        <h2 class="section-title">締めたイベント</h2>
+        <div id="events-closed"></div>
+      </div>
+    </main>
+    <button class="fab" id="btn-events-add" aria-label="イベントを作る">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </section>
+
+  <!-- ========== タブ:名簿 ========== -->
+  <section class="screen" id="screen-members">
+    <main class="app app-wide">
+      <div class="title-row">
+        <div>
+          <h1 class="page-title">名簿</h1>
+          <p class="sub" id="members-count"></p>
+        </div>
+        <button class="btn-outline" id="btn-members-add">＋ 追加</button>
+      </div>
+
+      <div class="segment segment-2" id="members-filter">
+        <button class="seg-btn active" data-members-filter="all">全員</button>
+        <button class="seg-btn" data-members-filter="unpaid">部費 未払いだけ</button>
+      </div>
+      <label class="check-row">
+        <input type="checkbox" id="members-show-ob">
+        <span>OB・その他も表示する</span>
+      </label>
+
+      <div id="members-groups"></div>
+    </main>
+  </section>
+
+  <!-- ========== 集金の詳細(部費・イベント) ========== -->
+  <section class="screen" id="screen-detail">
+    <main class="app">
+      <div class="top-row">
+        <button class="btn-back" data-back="tab">‹ 戻る</button>
+        <button class="btn-outline" id="btn-edit">編集</button>
+      </div>
+      <h1 class="page-title" id="detail-title"></h1>
+      <p class="sub" id="detail-meta"></p>
+
+      <div id="detail-summary"></div>
+
+      <div id="detail-payments-box">
+        <div class="section-head">
+          <span>払ったもの(宿代・お店など)</span>
+          <button class="btn-link" id="btn-payment-add">＋ 追加</button>
+        </div>
+        <div class="sheet-list" id="detail-payments"></div>
+      </div>
+
+      <div class="section-head">
+        <span>参加者</span>
+        <span class="sub">押すと支払い済みになります</span>
+      </div>
+      <div class="sheet-list" id="detail-members"></div>
+    </main>
+    <div class="footer-bar footer-two">
+      <button class="btn-outline-wide" id="btn-copy-unpaid">未払いの人へ連絡</button>
+      <button class="btn-main" id="btn-close-event">締める</button>
+    </div>
+  </section>
+
+  <!-- ========== 集金を作る・編集する(3段階) ========== -->
+  <section class="screen" id="screen-form">
+    <main class="app">
+      <div class="top-row">
+        <button class="btn-back" id="btn-form-back">‹ 戻る</button>
+        <span class="sub" id="form-kind"></span>
+      </div>
+
+      <ol class="stepper" id="form-stepper">
+        <li data-step="1">1 内容と割り方</li>
+        <li data-step="2">2 参加者</li>
+        <li data-step="3">3 確認</li>
+      </ol>
+
+      <!-- 1 内容と割り方 -->
+      <div class="step" id="form-step-1">
+        <div id="form-event-box">
+          <p class="field-label">種類</p>
+          <div class="chips" id="form-types"></div>
+        </div>
+
+        <div class="grid2 grid-title">
+          <div>
+            <label class="field-label" for="form-title">名前</label>
+            <input class="input" id="form-title" type="text" placeholder="例:冬合宿">
+          </div>
+          <div>
+            <label class="field-label" for="form-date">日付</label>
+            <input class="input" id="form-date" type="date">
+          </div>
+        </div>
+
+        <p class="field-label">割り方</p>
+        <div class="segment" id="form-mode">
+          <button class="seg-btn" data-mode="grade">学年別</button>
+          <button class="seg-btn" data-mode="equal">均等</button>
+          <button class="seg-btn" data-mode="custom">個別に入力</button>
+        </div>
+
+        <div id="form-grade-box">
+          <label class="check-row">
+            <input type="checkbox" id="form-by-gender">
+            <span>性別でも金額を分ける</span>
+          </label>
+          <div id="form-grade-prices">
+            <p class="price-row-label" id="price-label-m">男子</p>
+            <div class="price-grid">
+              <label class="price-cell">4年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="4"></label>
+              <label class="price-cell">3年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="3"></label>
+              <label class="price-cell">2年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="2"></label>
+              <label class="price-cell">1年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="1"></label>
+              <label class="price-cell">OB他<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="OB"></label>
+            </div>
+            <div id="price-row-f">
+              <p class="price-row-label">女子</p>
+              <div class="price-grid">
+                <label class="price-cell">4年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="4F"></label>
+                <label class="price-cell">3年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="3F"></label>
+                <label class="price-cell">2年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="2F"></label>
+                <label class="price-cell">1年<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="1F"></label>
+                <label class="price-cell">OB他<input class="input" type="text" inputmode="numeric" autocomplete="off" data-amount data-grade-key="OBF"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="form-equal-box">
+          <label class="field-label" for="form-equal">一人あたりの金額</label>
+          <input class="input num" id="form-equal" type="text" inputmode="numeric" autocomplete="off" data-amount>
+        </div>
+
+        <p class="hint" id="form-mode-hint"></p>
+      </div>
+
+      <!-- 2 参加者 -->
+      <div class="step" id="form-step-2">
+        <div class="title-row">
+          <h2 class="step-title">来た人を選ぶ</h2>
+          <span>
+            <button class="btn-link" id="btn-all-on">全員</button>
+            <button class="btn-link" id="btn-all-off">全員外す</button>
+          </span>
+        </div>
+        <div id="form-members"></div>
+      </div>
+
+      <!-- 3 確認 -->
+      <div class="step" id="form-step-3">
+        <h2 class="step-title">内容を確認</h2>
+        <div class="sheet-list" id="form-confirm"></div>
+        <p class="hint" id="form-confirm-note"></p>
+        <button class="btn-danger" id="btn-form-delete">削除する</button>
+      </div>
+    </main>
+
+    <div class="footer-bar footer-split">
+      <div class="footer-info" id="form-footer-info"></div>
+      <button class="btn-main" id="btn-form-next">次へ</button>
+    </div>
+  </section>
+
+  <!-- ========== メンバーの編集 ========== -->
+  <section class="screen" id="screen-member">
+    <main class="app">
+      <button class="btn-back" data-back="tab">‹ 名簿</button>
+      <h1 class="page-title">メンバーを編集</h1>
+
+      <label class="field-label" for="member-name">名前</label>
+      <input class="input" id="member-name" type="text">
+
+      <label class="field-label" for="member-year">入学年度</label>
+      <select class="input" id="member-year"></select>
+      <p class="hint">留年・休学で学年がずれた人は、入学年度をずらすと合います</p>
+
+      <label class="field-label" for="member-gender">性別(部費などを性別で分けるときに使います)</label>
+      <select class="input" id="member-gender">
+        <option value="">未設定</option>
+        <option value="男">男子</option>
+        <option value="女">女子</option>
+      </select>
+
+      <label class="field-label" for="member-role">役職</label>
+      <select class="input" id="member-role">
+        <option value="メンバー">メンバー</option>
+        <option value="幹部">幹部</option>
+        <option value="会計">会計</option>
+      </select>
+
+      <button class="btn-main btn-space" id="btn-member-save">保存</button>
+      <button class="btn-danger" id="btn-member-remove">名簿から外す</button>
+      <p class="note">外しても、これまでの記録には名前が残ります</p>
+    </main>
+  </section>
+
+  <!-- ========== メンバーをまとめて追加 ========== -->
+  <section class="screen" id="screen-bulk">
+    <main class="app">
+      <button class="btn-back" data-back="tab">‹ 名簿</button>
+      <h1 class="page-title">メンバーを追加</h1>
+
+      <label class="field-label" for="bulk-year">入学年度</label>
+      <select class="input" id="bulk-year"></select>
+
+      <label class="field-label" for="bulk-gender">性別</label>
+      <select class="input" id="bulk-gender">
+        <option value="">あとで設定する</option>
+        <option value="男">全員 男子</option>
+        <option value="女">全員 女子</option>
+      </select>
+
+      <label class="field-label" for="bulk-names">名前(1行に1人)</label>
+      <textarea class="input textarea" id="bulk-names" rows="8" placeholder="山田&#10;佐藤&#10;鈴木"></textarea>
+      <p class="hint">LINEのメンバー一覧などからコピーして貼り付けられます。学年は入学年度から自動で計算され、毎年4月に1つ上がります。</p>
+
+      <button class="btn-main btn-space" id="btn-bulk-add">名簿に追加</button>
+    </main>
+  </section>
+
+  <!-- ========== 下(PCでは右)から出る入力画面 ========== -->
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-backdrop" data-sheet-close></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-label="入力">
+      <div class="sheet-top">
+        <span class="sheet-handle" aria-hidden="true"></span>
+        <button class="sheet-close" data-sheet-close>閉じる</button>
+      </div>
+
+      <!-- 支出・収入の記録 -->
+      <div id="sheet-record">
+        <div class="segment segment-2" id="rf-type">
+          <button class="seg-btn" data-type="expense">支出</button>
+          <button class="seg-btn" data-type="income">収入</button>
+        </div>
+
+        <label class="amount-field">
+          <span class="amount-label">金額</span>
+          <span class="amount-box">
+            <span class="amount-yen" aria-hidden="true">¥</span>
+            <input class="amount-input" id="rf-amount" type="text" inputmode="numeric" autocomplete="off" data-amount>
+          </span>
+          <span class="amount-support">半角・全角どちらの数字でも入力できます</span>
+        </label>
+
+        <div id="rf-expense-box">
+          <div class="chips" id="rf-categories"></div>
+          <div class="field-rows">
+            <label class="field-row">
+              <span>日付</span>
+              <input class="row-input" id="rf-date" type="date">
+            </label>
+            <div class="field-row field-row-col">
+              <span>内容</span>
+              <div class="chips chips-small" id="rf-places"></div>
+              <input class="row-input" id="rf-place" type="text" placeholder="グラウンド名・大会名など">
+            </div>
+            <label class="field-row">
+              <span>時間</span>
+              <input class="row-input" id="rf-time" type="text" placeholder="例:9:00〜12:00">
+            </label>
+            <label class="field-row">
+              <span>払った人</span>
+              <select class="row-input" id="rf-payer"></select>
+            </label>
+          </div>
+        </div>
+
+        <div id="rf-income-box">
+          <div class="field-rows">
+            <label class="field-row">
+              <span>日付</span>
+              <input class="row-input" id="rf-income-date" type="date">
+            </label>
+            <label class="field-row">
+              <span>内容</span>
+              <input class="row-input" id="rf-title" type="text" placeholder="例:OB・OGからの支援">
+            </label>
+          </div>
+          <p class="hint">部費は「部費の集金」、イベントの余りは「締める」から自動で入るので、ここではそれ以外の収入を記録します。</p>
+        </div>
+
+        <label class="field-row field-row-last">
+          <span>メモ</span>
+          <input class="row-input" id="rf-memo" type="text" placeholder="予約番号など">
+        </label>
+
+        <button class="btn-main" id="btn-rf-save">記録する</button>
+        <button class="btn-danger" id="btn-rf-delete">この記録を削除</button>
+      </div>
+
+      <!-- イベントで払ったもの -->
+      <div id="sheet-payment">
+        <h2 class="step-title">払ったもの</h2>
+        <label class="amount-field">
+          <span class="amount-label">金額</span>
+          <span class="amount-box">
+            <span class="amount-yen" aria-hidden="true">¥</span>
+            <input class="amount-input" id="pf-amount" type="text" inputmode="numeric" autocomplete="off" data-amount>
+          </span>
+        </label>
+        <div class="field-rows">
+          <label class="field-row">
+            <span>内容</span>
+            <input class="row-input" id="pf-title" type="text" placeholder="例:宿代、お店の会計">
+          </label>
+          <label class="field-row field-row-last">
+            <span>払った人</span>
+            <select class="row-input" id="pf-payer"></select>
+          </label>
+        </div>
+        <button class="btn-main" id="btn-pf-save">記録する</button>
+        <button class="btn-danger" id="btn-pf-delete">削除する</button>
+      </div>
+
+      <!-- 設定 -->
+      <div id="sheet-settings">
+        <h2 class="step-title">記録を始めた日の残高</h2>
+        <p class="hint">手元の現金と口座の合計を数えて入れてください。この日からあとの記録で残高を計算します。</p>
+        <div class="field-rows">
+          <label class="field-row">
+            <span>日付</span>
+            <input class="row-input" id="st-date" type="date">
+          </label>
+          <label class="field-row field-row-last">
+            <span>残高</span>
+            <input class="row-input num" id="st-balance" type="text" inputmode="numeric" autocomplete="off" data-amount>
+          </label>
+        </div>
+        <button class="btn-main" id="btn-st-save">保存</button>
+
+        <h2 class="step-title settings-gap">書き出し</h2>
+        <p class="hint">表示中の年度の帳簿を、スプレッドシートで開ける形(CSV)で保存します。</p>
+        <button class="btn-outline-wide btn-space-s" id="btn-export">帳簿をCSVで書き出す</button>
+
+        <h2 class="step-title settings-gap">データ</h2>
+        <div class="text-buttons">
+          <button class="btn-text" id="btn-reset">サンプルデータに戻す</button>
+          <button class="btn-text" id="btn-clear">全部消して始める</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 下のタブ(PCでは左のメニュー) ========== -->
+  <nav class="tabbar" id="tabbar" aria-label="メニュー">
+    <p class="tabbar-brand">サークル会計<span>軟式野球サークル</span></p>
+    <button class="tab" data-tab="home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      帳簿
+    </button>
+    <button class="tab" data-tab="spend">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+      支出・精算
+    </button>
+    <button class="tab" data-tab="events">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      イベント
+    </button>
+    <button class="tab" data-tab="members">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 5.5 5"/></svg>
+      名簿
+    </button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span id="toast-text"></span>
+    <button class="toast-undo" id="toast-undo" hidden>元に戻す</button>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
